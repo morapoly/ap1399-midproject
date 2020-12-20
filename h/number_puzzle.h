@@ -3,11 +3,12 @@
 
 #include <iostream>
 #include <iomanip>
-#include <list>
+#include <deque>
 #include <memory>
 #include <vector>
 
 class NumberPuzzle{
+    public:
     class Node{
         public:
         
@@ -34,19 +35,22 @@ class NumberPuzzle{
         bool is_same_puzzle(int* p) const;
         void expand_node();
         std::shared_ptr<Node> parent;
-        std::list<std::shared_ptr<Node>> children;
+        std::deque<std::shared_ptr<Node>> children;
     
     };
     class UniformedSearch{
-        UniformedSearch();
-        ~UniformedSearch();
-        std::list<std::shared_ptr<NumberPuzzle::Node>> breadth_first_search(std::shared_ptr<Node> root);
+        public:
+        UniformedSearch() = default;
+        ~UniformedSearch() = default;
+        std::deque<std::shared_ptr<NumberPuzzle::Node>> breadth_first_search(std::shared_ptr<Node> root);
+        bool contains(std::deque<std::shared_ptr<NumberPuzzle::Node>> list, std::shared_ptr<NumberPuzzle::Node> c);
+        void path_trace(std::deque<std::shared_ptr<NumberPuzzle::Node>> &path, std::shared_ptr<NumberPuzzle::Node> node);
     };
 
-    public:
     NumberPuzzle();
     ~NumberPuzzle() = default;
     NumberPuzzle(int c);
+    
     private:
     int c{3};   // Number of columns
     // int m{9};

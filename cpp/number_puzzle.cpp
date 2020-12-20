@@ -7,7 +7,7 @@ NumberPuzzle::Node::Node(){
 }
 
 NumberPuzzle::Node::~Node(){
-    delete[] puzzle;
+    // delete[] puzzle;
 }
 
 NumberPuzzle::Node::Node(int c){
@@ -21,6 +21,17 @@ NumberPuzzle::Node::Node(int* p,int c){
     n = c * c;
     set_puzzle(p);
 }
+
+// NumberPuzzle::Node::Node(int p[],int c){
+//     col = c;
+//     n = c * c;
+//     int* temp = new int[n];
+//     for (int i{}; i < n; i++){
+//         temp[i] = p[i];
+//     }
+//     set_puzzle(temp);
+//     delete[] temp;
+// }
 
 NumberPuzzle::Node::Node(Node* node){
     n = node->n;
@@ -53,9 +64,9 @@ void NumberPuzzle::Node::set_puzzle(int* p){
 bool NumberPuzzle::Node::goal_test(){
     int* goal_puzzle = new int[n];
     for (int i{}; i < n; i++){
-        goal_puzzle[i] = i + 1;
+        goal_puzzle[i] = i;
     }
-    goal_puzzle[n - 1] = 0;
+    // goal_puzzle[n - 1] = 0;
     return goal_test(goal_puzzle);
 }
 
@@ -71,15 +82,15 @@ bool NumberPuzzle::Node::move_to_right(int* p,int i){
     if (i % col < col - 1){
         int* pc = new int[n];
         copy_puzzle(pc,p);
-
+        
         int temp = pc[i + 1];
         pc[i + 1] = pc[i];
         pc[i] = temp;
 
         std::shared_ptr<Node> child = std::make_shared<Node>(pc, col);
         children.push_back(child);
-        child->parent = std::make_shared<Node>(this);
-
+        child->parent = std::make_shared<Node>(*this);
+        
         return true;
     }
     else{
@@ -98,7 +109,7 @@ bool NumberPuzzle::Node::move_to_left(int* p,int i){
 
         std::shared_ptr<Node> child = std::make_shared<Node>(pc, col);
         children.push_back(child);
-        child->parent = std::make_shared<Node>(this);
+        child->parent = std::make_shared<Node>(*this);
 
         return true;
     }
@@ -118,7 +129,7 @@ bool NumberPuzzle::Node::move_to_up(int* p,int i){
 
         std::shared_ptr<Node> child = std::make_shared<Node>(pc, col);
         children.push_back(child);
-        child->parent = std::make_shared<Node>(this);
+        child->parent = std::make_shared<Node>(*this);
 
         return true;
     }
@@ -138,7 +149,7 @@ bool NumberPuzzle::Node::move_to_down(int* p,int i){
 
         std::shared_ptr<Node> child = std::make_shared<Node>(pc, col);
         children.push_back(child);
-        child->parent = std::make_shared<Node>(this);
+        child->parent = std::make_shared<Node>(*this);
 
         return true;
     }
@@ -180,37 +191,69 @@ void NumberPuzzle::Node::expand_node(){
             x = i;
         }
     }
-
     move_to_right(puzzle, x);
     move_to_left(puzzle, x);
     move_to_up(puzzle, x);
     move_to_down(puzzle, x);
 }
 
-std::list<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::UniformedSearch::breadth_first_search(std::shared_ptr<Node> root){
-    std::list<std::shared_ptr<Node>> path_to_solution{};
-    std::list<std::shared_ptr<Node>> opened_list{};
-    std::list<std::shared_ptr<Node>> closed_list{};
+std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::UniformedSearch::breadth_first_search(std::shared_ptr<Node> root){
+    std::deque<std::shared_ptr<Node>> path_to_solution{};
+    std::deque<std::shared_ptr<Node>> open_list{};
+    std::deque<std::shared_ptr<Node>> closed_list{};
     
-    opened_list.push_back(root);
+    open_list.push_back(root);
     bool goal_reached{false};
-    while(opened_list.size() > 0 && !goal_reached){
-        std::shared_ptr<Node> current_node = opened_list.front();
-        closed_list.push_back(current_node);
-        opened_list.pop_front();
+    
+    // for (int i{}; i < 40; i++){
+        while(open_list.size() > 0 && !goal_reached){
+            // std::cout << "ol size: " << open_list.size() << " gr: " << goal_reached << "\n";
+            std::shared_ptr<Node> current_node = open_list.front();
+            closed_list.push_back(current_node);
+            open_list.pop_front();
 
-        current_node->expand_node();
+            current_node->expand_node();
+            // current_node->show();
 
-    //     for (int i{}; i < current_node->children.size(); i++){
-    //         std::shared_ptr<Node> current_child = current_node->children[i];
-    //         if (current_child->goal_test()){
-    //             std::cout << "Goal reached..." << std::endl;
-    //             goal_reached = true;
-    //         }
-    //     }
-    // }
+            for (size_t i{}; i < current_node->children.size(); i++){
+                std::shared_ptr<Node> current_child = current_node->children[i];
+                
+                if (current_child->goal_test()){
+                    std::cout << "Goal reached..." << std::endl;
+                    goal_reached = true;
+                    // Tracing path
+                    path_trace(path_to_solution, current_child);
+                }
 
+                if (!contains(open_list, current_child) && !contains(closed_list, current_child)){
+                    open_list.push_back(current_child);
+                }
+            }
+        // }
+    }
     return path_to_solution;
+}
+
+bool NumberPuzzle::UniformedSearch::contains(std::deque<std::shared_ptr<NumberPuzzle::Node>> list, std::shared_ptr<NumberPuzzle::Node> c){
+    bool contains = false;
+
+    for (size_t i{}; i < list.size(); i++){
+        if (list[i]->is_same_puzzle(c->puzzle)){
+            contains = true;
+        }
+    }
+    return contains;
+}
+
+void NumberPuzzle::UniformedSearch::path_trace(std::deque<std::shared_ptr<NumberPuzzle::Node>> &path, std::shared_ptr<NumberPuzzle::Node> node){
+    std::cout << "Tracing path...\n";
+    std::shared_ptr<NumberPuzzle::Node> current = node;
+    path.push_back(current);
+
+    while (current->parent != nullptr){
+        current = current->parent;
+        path.push_back(current);
+    }
 }
 
 NumberPuzzle::NumberPuzzle(){

@@ -1,42 +1,37 @@
 #include "mid_project.h"
 #include <list>
 
-int func(int x[]);
-
 int main(int argc, char **argv)
 {
     std::cout << "Started...\n";
-    // int* x = new int[3];
-    int x[3];
-    x[0] = 10;
-    x[1] = 1;
-    x[2] = 2;
-    std::cout << func(x) << std::endl;
-    std::list<int> y{1, 2, 3};
-    std::cout << y.front() << y.front() << std::endl;
-    // delete[] x;
-    // int n = 3;
-    // NumberPuzzle np{ n };
-    // np.fill_elements();
-    // np.show();
+    NumberPuzzle np{};
+    int puzzle[] = {
+        1, 2, 4,
+        3, 6, 5,
+        7, 0, 8
+    };
 
-    // // Generating a target
-    // int** target = new int*[n];
-    // for (int i{}; i < n; i++){
-    //     target[i] = new int[n];
-    // }
-    // for (int i{}; i < n; i++){
-    //     for (int j{}; j < n; j++){
-    //         target[i][j] = n * i + j + 1;
-    //     }
-    // }
-    // target[n - 1][n - 1] = 1;
+    // int puzzle[] = {
+    //     0, 2, 3,
+    //     1, 5, 6,
+    //     4, 7, 8
+    // };
+    NumberPuzzle::Node root{puzzle, 3};
+    
+    NumberPuzzle::UniformedSearch ui{};
+    std::deque<std::shared_ptr<NumberPuzzle::Node>> sol = ui.breadth_first_search(std::make_shared<NumberPuzzle::Node>(root));
+    std::cout << "Ended...\n"; 
 
-    // std::cout << np.is_completed(target) << std::endl;
-    // // std::list<int> = new std::list<int>();
+    if (sol.size() > 0){
+        sol = std::deque<std::shared_ptr<NumberPuzzle::Node>>(sol.rbegin(),sol.rend());
+        for (size_t i{}; i < sol.size(); i++){
+            sol[i]->show();
+        }
+    }
+    else{
+        std::cout << "No path to solution is found...\n"; 
+    }
+    
+    std::cout << "\n";
     return 0;
-}
-
-int func(int x[]){
-    return x[0];
 }
