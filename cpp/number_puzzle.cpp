@@ -1,5 +1,6 @@
 #include "number_puzzle.h"
 
+// Node methods
 NumberPuzzle::Node::Node(){
     col = 3;
     n = col * col;
@@ -7,7 +8,7 @@ NumberPuzzle::Node::Node(){
 }
 
 NumberPuzzle::Node::~Node(){
-    // delete[] puzzle;
+    puzzle = nullptr;
 }
 
 NumberPuzzle::Node::Node(int c){
@@ -22,17 +23,6 @@ NumberPuzzle::Node::Node(int* p,int c){
     set_puzzle(p);
 }
 
-// NumberPuzzle::Node::Node(int p[],int c){
-//     col = c;
-//     n = c * c;
-//     int* temp = new int[n];
-//     for (int i{}; i < n; i++){
-//         temp[i] = p[i];
-//     }
-//     set_puzzle(temp);
-//     delete[] temp;
-// }
-
 NumberPuzzle::Node::Node(Node* node){
     n = node->n;
     col = node->col;
@@ -45,10 +35,9 @@ NumberPuzzle::Node::Node(Node* node){
 void NumberPuzzle::Node::set_puzzle(){
     puzzle = new int[n];  
     for (int i{}; i < n; i++){
-        puzzle[i] = i + 1;
+        puzzle[i] = i;
     }
-    puzzle[n - 1] = 0;
-    x = n - 1;
+    x = 0;
 }
 
 void NumberPuzzle::Node::set_puzzle(int* p){
@@ -61,16 +50,16 @@ void NumberPuzzle::Node::set_puzzle(int* p){
     }
 }
 
-bool NumberPuzzle::Node::goal_test(){
+bool NumberPuzzle::Node::goal_test() const{
     int* goal_puzzle = new int[n];
     for (int i{}; i < n; i++){
-        goal_puzzle[i] = i;
+        goal_puzzle[i] = i + 1;
     }
-    // goal_puzzle[n - 1] = 0;
+    goal_puzzle[n - 1] = 0;
     return goal_test(goal_puzzle);
 }
 
-bool NumberPuzzle::Node::goal_test(int* goal_puzzle){
+bool NumberPuzzle::Node::goal_test(int* goal_puzzle) const{
     bool is_goal{1};
     for (int i{}; i < n; i++){
         is_goal = is_goal && ( (puzzle[i] == goal_puzzle[i]) ? 1 : 0 );
@@ -197,7 +186,42 @@ void NumberPuzzle::Node::expand_node(){
     move_to_down(puzzle, x);
 }
 
-std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::UniformedSearch::breadth_first_search(std::shared_ptr<Node> root){
+NumberPuzzle::NumberPuzzle(){
+    c = 3;
+    n = c * c;
+    set_goal_puzzle();
+}
+
+NumberPuzzle::~NumberPuzzle(){
+    goal_puzzle = nullptr;
+}
+
+NumberPuzzle::NumberPuzzle(int c){
+    this->c = c;
+    n = c * c;
+    set_goal_puzzle();
+}
+
+void NumberPuzzle::set_goal_puzzle(){
+    goal_puzzle = new int[n];
+    for (int i{}; i < n; i++){
+        goal_puzzle[i] = i + 1;
+    }
+    goal_puzzle[n - 1] = 0;
+}
+
+void NumberPuzzle::set_goal_puzzle(int* p){
+    goal_puzzle = new int[n];
+    for (int i{}; i < n; i++){
+        goal_puzzle[i] = p[i];
+    }
+}
+
+std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::breadth_first_search(std::shared_ptr<Node> root){
+    if (root->goal_test(goal_puzzle)){
+        return std::deque<std::shared_ptr<Node>>{root};
+    }
+    
     std::deque<std::shared_ptr<Node>> path_to_solution{};
     std::deque<std::shared_ptr<Node>> open_list{};
     std::deque<std::shared_ptr<Node>> closed_list{};
@@ -218,7 +242,7 @@ std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::UniformedSearch::b
             for (size_t i{}; i < current_node->children.size(); i++){
                 std::shared_ptr<Node> current_child = current_node->children[i];
                 
-                if (current_child->goal_test()){
+                if (current_child->goal_test(goal_puzzle)){
                     std::cout << "Goal reached..." << std::endl;
                     goal_reached = true;
                     // Tracing path
@@ -234,7 +258,7 @@ std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::UniformedSearch::b
     return path_to_solution;
 }
 
-bool NumberPuzzle::UniformedSearch::contains(std::deque<std::shared_ptr<NumberPuzzle::Node>> list, std::shared_ptr<NumberPuzzle::Node> c){
+bool NumberPuzzle::contains(std::deque<std::shared_ptr<Node>> list, std::shared_ptr<Node> c){
     bool contains = false;
 
     for (size_t i{}; i < list.size(); i++){
@@ -245,7 +269,7 @@ bool NumberPuzzle::UniformedSearch::contains(std::deque<std::shared_ptr<NumberPu
     return contains;
 }
 
-void NumberPuzzle::UniformedSearch::path_trace(std::deque<std::shared_ptr<NumberPuzzle::Node>> &path, std::shared_ptr<NumberPuzzle::Node> node){
+void NumberPuzzle::path_trace(std::deque<std::shared_ptr<Node>> &path, std::shared_ptr<Node> node){
     std::cout << "Tracing path...\n";
     std::shared_ptr<NumberPuzzle::Node> current = node;
     path.push_back(current);
@@ -255,52 +279,3 @@ void NumberPuzzle::UniformedSearch::path_trace(std::deque<std::shared_ptr<Number
         path.push_back(current);
     }
 }
-
-NumberPuzzle::NumberPuzzle(){
-    Node();
-}
-
-// NumberPuzzle::~NumberPuzzle(){
-//     for (int i{}; i < n; i++){
-//         delete[] elements[i];
-//     }
-//     delete[] elements;
-// }
-
-NumberPuzzle::NumberPuzzle(int c){
-    this->c = c;
-}
-
-// void NumberPuzzle::fill_elements(){
-//     elements = new int*[n];
-//     for (int i{}; i < n; i++){
-//         elements[i] = new int[n];
-//     }
-//     for (int i{}; i < n; i++){
-//         for (int j{}; j < n; j++){
-//             elements[i][j] = n * i + j + 1;
-//         }
-//     }
-//     elements[n - 1][n - 1] = 0;
-// }
-
-// void NumberPuzzle::show() const{
-//     // std::cout << std::endl;
-//     // for (int i{}; i < n; i++){
-//     //     for (int j{}; j < n; j++){
-//     //         std::cout << std::setw(n) << elements[i][j] << " ";
-//     //     }
-//     //     std::cout << std::endl << std::endl;
-//     // }
-
-// }
-
-// bool NumberPuzzle::is_completed(int** goal_state) const{
-//     bool result{ 1 };
-//     for (int i{}; i < n; i++){
-//         for (int j{}; j < n; j++){
-//             result = result && ( (elements[i][j] == goal_state[i][j]) ? 1 : 0 );
-//         }
-//     }
-//     return result;
-// }

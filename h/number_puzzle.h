@@ -5,7 +5,6 @@
 #include <iomanip>
 #include <deque>
 #include <memory>
-#include <vector>
 
 class NumberPuzzle{
     public:
@@ -24,8 +23,8 @@ class NumberPuzzle{
         Node(Node* node);
         void set_puzzle();
         void set_puzzle(int* p);
-        bool goal_test();
-        bool goal_test(int* goal_puzzle);
+        bool goal_test() const;
+        bool goal_test(int* goal_puzzle) const;
         bool move_to_right(int* p,int i);
         bool move_to_left(int* p,int i);
         bool move_to_up(int* p,int i);
@@ -38,26 +37,19 @@ class NumberPuzzle{
         std::deque<std::shared_ptr<Node>> children;
     
     };
-    class UniformedSearch{
-        public:
-        UniformedSearch() = default;
-        ~UniformedSearch() = default;
-        std::deque<std::shared_ptr<NumberPuzzle::Node>> breadth_first_search(std::shared_ptr<Node> root);
-        bool contains(std::deque<std::shared_ptr<NumberPuzzle::Node>> list, std::shared_ptr<NumberPuzzle::Node> c);
-        void path_trace(std::deque<std::shared_ptr<NumberPuzzle::Node>> &path, std::shared_ptr<NumberPuzzle::Node> node);
-    };
 
     NumberPuzzle();
-    ~NumberPuzzle() = default;
+    ~NumberPuzzle();
     NumberPuzzle(int c);
-    
+    void set_goal_puzzle();
+    void set_goal_puzzle(int* p);
+    std::deque<std::shared_ptr<Node>> breadth_first_search(std::shared_ptr<Node> root);
+    bool contains(std::deque<std::shared_ptr<Node>> list, std::shared_ptr<Node> c);
+    void path_trace(std::deque<std::shared_ptr<Node>> &path, std::shared_ptr<Node> node);
     private:
     int c{3};   // Number of columns
-    // int m{9};
-    // int** elements;
-    // void fill_elements();
-    // void show() const;
-    // bool is_completed(int** goal_state) const;
+    int n{c * c};
+    int* goal_puzzle;
 };
 
 #endif
