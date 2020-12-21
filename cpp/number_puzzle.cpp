@@ -67,6 +67,14 @@ bool NumberPuzzle::Node::goal_test(int* goal_puzzle) const{
     return is_goal;
 }
 
+void NumberPuzzle::Node::set_x(){
+    for (int i{}; i < n; i++){
+        if (puzzle[i] == 0){
+            x = i;
+        }
+    }
+}
+
 bool NumberPuzzle::Node::move_to_right(int* p,int i){
     if (i % col < col - 1){
         int* pc = new int[n];
@@ -147,6 +155,66 @@ bool NumberPuzzle::Node::move_to_down(int* p,int i){
     }
 }
 
+bool NumberPuzzle::Node::move_to_right(){
+    int temp;
+    set_x();
+    if (x % col < col - 1){
+        temp = puzzle[x + 1];
+        puzzle[x + 1] = puzzle[x];
+        puzzle[x] = temp;
+        show();
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool NumberPuzzle::Node::move_to_left(){
+    int temp;
+    set_x();
+    if (x % col > 0){
+        temp = puzzle[x - 1];
+        puzzle[x - 1] = puzzle[x];
+        puzzle[x] = temp;
+        show();
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool NumberPuzzle::Node::move_to_up(){
+    int temp;
+    set_x();
+    if (x - col >= 0){
+        temp = puzzle[x - col];
+        puzzle[x - col] = puzzle[x];
+        puzzle[x] = temp;
+        show();
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool NumberPuzzle::Node::move_to_down(){
+    int temp;
+    set_x();
+    if (x + col < n){
+        temp = puzzle[x + col];
+        puzzle[x + col] = puzzle[x];
+        puzzle[x] = temp;
+        show();
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 void NumberPuzzle::Node::copy_puzzle(int* pc, int* p){
     for (int i{}; i < n; i++){
         pc[i] = p[i];
@@ -175,11 +243,7 @@ bool NumberPuzzle::Node::is_same_puzzle(int* p) const{
 }
 
 void NumberPuzzle::Node::expand_node(){
-    for (int i{}; i < n; i++){
-        if (puzzle[i] == 0){
-            x = i;
-        }
-    }
+    set_x();
     move_to_right(puzzle, x);
     move_to_left(puzzle, x);
     move_to_up(puzzle, x);
@@ -215,6 +279,33 @@ void NumberPuzzle::set_goal_puzzle(int* p){
     for (int i{}; i < n; i++){
         goal_puzzle[i] = p[i];
     }
+}
+
+std::shared_ptr<NumberPuzzle::Node> NumberPuzzle::make_random_puzzle(int moves){
+    std::shared_ptr<Node> output = std::make_shared<Node>(goal_puzzle, c);
+    srand(time(0));
+    bool b[4] = {0, 0, 0, 0};
+    int count{};
+    while (count < moves){
+        if (rand() % 4 == 0){
+            b[0] = output->move_to_right();
+        }
+        else if (rand() % 4 == 1){
+            b[1] = output->move_to_left();
+        }
+        else if (rand() % 4 == 2){
+            b[2] = output->move_to_up();
+        }
+        else{
+            b[3] = output->move_to_up();
+        }
+        count++;
+        if (!(b[0] || b[1] || b[2] || b[3])){
+            count--;
+        }
+        b[0] = b[1] = b[2] = b[3] = 0;
+    }
+    return output;
 }
 
 std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::breadth_first_search(std::shared_ptr<Node> root){

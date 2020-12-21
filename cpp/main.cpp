@@ -1,5 +1,7 @@
 #include "mid_project.h"
 
+bool func(int &x);
+
 int main(int argc, char **argv)
 {
     std::cout << "Started...\n";
@@ -99,10 +101,15 @@ int main(int argc, char **argv)
         std::cout << "No path to solution is found...\n"; 
     }
     */
-    int x{};
-    // while (x < 2 || x > 6){
-        std::cin >> x;
-    // }
-    std::cout << x << std::endl;
+    // run_puzzle();
+    NumberPuzzle np;
+    std::shared_ptr<NumberPuzzle::Node> node;
+    node = np.make_random_puzzle(100);
+    // node->show();
     return 0;
+}
+
+bool func(int &x){
+    x ++;
+    return x == 10;
 }
