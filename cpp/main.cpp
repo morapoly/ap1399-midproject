@@ -2,21 +2,8 @@
 
 int main(int argc, char **argv)
 {
-    char c{};
     std::cout << "Started...\n";
-    std::cout << "Welcom to Number Puzzle\n";
-    std::cout << "Do you want to solve or see?\n";
-    while (c != 'y' && c != 'Y' && c != 'n' && c != 'N'){
-        std::cout << "(Enter y to solve a puzzle or n to see how a puzzle is solved.)\n";
-        std::cin >> c;
-    }
-    if (c == 'y' || c == 'Y'){
-
-    }
-    else{
-
-    }
-    NumberPuzzle np{};
+    /*
     // int puzzle[] = {  // compatible with gp1
     //     1, 2, 4,
     //     3, 0, 5,
@@ -71,11 +58,34 @@ int main(int argc, char **argv)
         13,14, 15,  0
     };
 
-    NumberPuzzle::Node root{puzzle4, 4};
+    // int puzzle6[] = {
+    //     7,   1,  2,  3,  4,  5,
+    //     13,  8,  9, 10, 11,  6,
+    //     19, 14, 15, 16, 17, 12,
+    //     25, 20, 21, 22, 23, 18,
+    //     31, 26, 27, 28, 29, 24,
+    //      0, 32, 33, 34, 35, 30,        
+    // };
+
+    int puzzle6[] = {
+        1,   2,  3,  4,  5,  6,
+        7,   8,  9, 10, 11, 12,
+        13, 14, 15, 16, 17, 18,
+        19, 20, 21, 22, 23, 24,
+        25, 26, 27, 28, 29, 30,
+        31, 32, 33, 34,  0, 35,        
+    };
+    int p[100];
+    for (int i{}; i < 100; i++){
+        p[i] = i + 1;
+    }
+    p[99] = 99;
+    p[98] = 0;
+
+    NumberPuzzle::Node root{p, 10};
     // NumberPuzzle::Node root{3};
     
-    NumberPuzzle ui{4};
-    ui.set_goal_puzzle(gp4);
+    NumberPuzzle ui{10};
     std::deque<std::shared_ptr<NumberPuzzle::Node>> sol = ui.breadth_first_search(std::make_shared<NumberPuzzle::Node>(root));
     std::cout << "Ended...\n"; 
 
@@ -88,6 +98,11 @@ int main(int argc, char **argv)
     else{
         std::cout << "No path to solution is found...\n"; 
     }
-    
+    */
+    int x{};
+    // while (x < 2 || x > 6){
+        std::cin >> x;
+    // }
+    std::cout << x << std::endl;
     return 0;
 }

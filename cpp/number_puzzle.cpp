@@ -158,7 +158,7 @@ void NumberPuzzle::Node::show() const{
     std::cout << std::endl;
     for (int i{}; i < col; i++){
         for (int j{}; j < col; j++){
-            std::cout << std::setw(col) << puzzle[c] << " ";
+            std::cout << std::setw(4) << puzzle[c] << " ";
             c++;
         }
         std::cout << std::endl << std::endl;
