@@ -11,12 +11,10 @@ class NumberPuzzle{
     public:
     class Node{
         public:
-        
         int* puzzle;
         int x{};    // Index of zero element
         int col{3};
-        int n{col * col};
-        
+        int n{col * col};        
         Node();
         ~Node();
         Node(int c);
@@ -41,9 +39,7 @@ class NumberPuzzle{
         void expand_node();
         std::shared_ptr<Node> parent;
         std::deque<std::shared_ptr<Node>> children;
-    
     };
-
     NumberPuzzle();
     ~NumberPuzzle();
     NumberPuzzle(int c);
@@ -53,6 +49,7 @@ class NumberPuzzle{
     std::deque<std::shared_ptr<Node>> breadth_first_search(std::shared_ptr<Node> root);
     bool contains(std::deque<std::shared_ptr<Node>> list, std::shared_ptr<Node> c);
     void path_trace(std::deque<std::shared_ptr<Node>> &path, std::shared_ptr<Node> node);
+    
     private:
     int c{3};   // Number of columns
     int n{c * c};

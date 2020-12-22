@@ -42,10 +42,26 @@ int main(int argc, char **argv)
     // std::shared_ptr<NumberPuzzle::Node> node;
     // node = np.make_random_puzzle(100);
     // node->show();
-    bool b{true};
-    while (b){
-        b = run_puzzle();
+    // bool b{true};
+    // while (b){
+    //     b = run_puzzle();
+    // }
+    std::ifstream fs;
+    fs.open("./stuff/input.txt");
+    int p[9];
+    int i{};
+    fs >> p[i];
+    if (fs.is_open()){
+        // while (!fs.eof()){
+        //     fs >> p[i];
+        //     i++;
+        // }
     }
+    else{
+        std::cout << "File not found.\n";
+    }
+    fs.close();
+    std::cout << p[0] << std::endl;
     return 0;
 }
 

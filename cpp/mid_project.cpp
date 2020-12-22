@@ -5,7 +5,8 @@ bool run_puzzle(){
     int col{}, n{}, moves{};
     int* initial_puzzle;
     int* goal_puzzle;
-    std::cout << "Welcom to Number Puzzle\n";
+
+    std::cout << "Welcom to Number Puzzle.\n";
     std::cout << "Do you want to solve or see?\n";
     while (!is_answer_char(c1)){
         std::cout << "(Enter y to solve a puzzle, or n to see how a puzzle is solved:)\n";
@@ -33,9 +34,8 @@ bool run_puzzle(){
 
     n = col * col;
     
-    std::cout << "The goal puzzle is:\n";
-    
     // Showing goal puzzle 
+    std::cout << "The goal puzzle is:\n";
     goal_puzzle = new int[n];
     NumberPuzzle::Node goal_node{goal_puzzle, col};
     goal_node.set_puzzle();
