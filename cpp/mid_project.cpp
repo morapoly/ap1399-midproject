@@ -1,6 +1,6 @@
 #include "mid_project.h"
 
-int run_puzzle(){
+bool run_puzzle(){
     char c1{}, c2{}, c3{}, c4{}, c5{}, c6{}, c7{};
     int col{}, n{}, moves{};
     int* initial_puzzle;
@@ -37,10 +37,10 @@ int run_puzzle(){
     
     // Showing goal puzzle 
     goal_puzzle = new int[n];
-    std::shared_ptr<NumberPuzzle::Node> goal_node = std::make_shared<NumberPuzzle::Node>(goal_puzzle, col);
-    goal_node->set_puzzle();
-    goal_node->copy_puzzle(goal_puzzle, goal_node->puzzle);
-    goal_node->show();
+    NumberPuzzle::Node goal_node{goal_puzzle, col};
+    goal_node.set_puzzle();
+    goal_node.copy_puzzle(goal_puzzle, goal_node.puzzle);
+    goal_node.show();
 
     std::cout << "Do you want to continue?\n";
     c3 = 0; // Use c3 again
@@ -70,7 +70,7 @@ int run_puzzle(){
         else{
             // User sets elements from file
         }
-        goal_node->set_puzzle(goal_puzzle);
+        goal_node.set_puzzle(goal_puzzle);
     }
 
     std::shared_ptr<NumberPuzzle::Node> initial_node = std::make_shared<NumberPuzzle::Node>(col);
@@ -125,8 +125,8 @@ int run_puzzle(){
     // Starting operations
     if (!is_yes(c1)){
         
-        // Going to see how the puzzle is solved using BFS algorithm
-        std::cout << "It's going to solve puzzle.\n";
+        // Going to see how the puzzle is solved
+        std::cout << "It's going to solve puzzle using BFS algorithm.\n";
         NumberPuzzle np{col};
         np.set_goal_puzzle(goal_puzzle);
         auto solution = np.breadth_first_search(std::make_shared<NumberPuzzle::Node>(initial_puzzle, col));
@@ -145,10 +145,56 @@ int run_puzzle(){
         // User is going to solve the puzzle
         initial_node->set_puzzle(initial_puzzle); // For sake of mohkamkari!
         std::cout << "You are going to solve the puzzle.\n";
-        
+        initial_node->show();
+        std::cout << "(Use w to move up, s to move down, a to move left & d to move right.)\n";
+        while (!initial_node->goal_test(goal_puzzle)){
+            while (c7 != 'w' && c7 != 'W' && c7 != 's' && c7 != 'S' && c7 != 'a' && c7 != 'A' && c7 != 'd' && c7 != 'D' && c7 != 'e' && c7 != 'E'){
+                std::cout << "w a s d to move or e to left:\n";
+                std::cin >> c7;
+            }
+            if (c7 == 'w' || c7 == 'W'){
+                initial_node->move_to_up();
+                initial_node->show();
+            }
+            else if (c7 == 's' || c7 == 'S'){
+                initial_node->move_to_down();
+                initial_node->show();
+            }
+            else if (c7 == 'a' || c7 == 'A'){
+                initial_node->move_to_left();
+                initial_node->show();
+            }
+            else if (c7 == 'd' || c7 == 'D'){
+                initial_node->move_to_right();
+                initial_node->show();
+            }
+            else{
+                break;
+            }
+            c7 = 0;
+        }
+        if (initial_node->goal_test()){
+            std::cout << "Congratulations!\n";
+            std::cout << "You solved the puzzle.\n";
+        }
+        else{
+            std::cout << "You left!\n";
+        }
     }
-
-    return 0;
+    std::cout << "Do you want to run puzzle again?\n";
+    
+    // Use c7 again
+    c7 = 0;
+    while (!is_answer_char(c7)){
+        std::cout << "(Enter y to run again and n to exit.\n";
+        std::cin >> c7;
+    }
+    if (is_yes(c7)){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 bool is_answer_char(char c){

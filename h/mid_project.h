@@ -3,7 +3,7 @@
 
 #include "number_puzzle.h"
 
-int run_puzzle();
+bool run_puzzle();
 bool is_answer_char(char c);
 bool is_yes(char c);
 

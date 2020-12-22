@@ -42,7 +42,10 @@ int main(int argc, char **argv)
     // std::shared_ptr<NumberPuzzle::Node> node;
     // node = np.make_random_puzzle(100);
     // node->show();
-    run_puzzle();
+    bool b{true};
+    while (b){
+        b = run_puzzle();
+    }
     return 0;
 }
 

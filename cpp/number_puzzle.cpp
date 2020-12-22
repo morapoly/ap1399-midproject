@@ -163,6 +163,7 @@ bool NumberPuzzle::Node::move_to_right(){
         temp = puzzle[x + 1];
         puzzle[x + 1] = puzzle[x];
         puzzle[x] = temp;
+        set_x();
         return true;
     }
     else{
@@ -177,6 +178,7 @@ bool NumberPuzzle::Node::move_to_left(){
         temp = puzzle[x - 1];
         puzzle[x - 1] = puzzle[x];
         puzzle[x] = temp;
+        set_x();
         return true;
     }
     else{
@@ -191,6 +193,7 @@ bool NumberPuzzle::Node::move_to_up(){
         temp = puzzle[x - col];
         puzzle[x - col] = puzzle[x];
         puzzle[x] = temp;
+        set_x();
         return true;
     }
     else{
@@ -205,6 +208,7 @@ bool NumberPuzzle::Node::move_to_down(){
         temp = puzzle[x + col];
         puzzle[x + col] = puzzle[x];
         puzzle[x] = temp;
+        set_x();
         return true;
     }
     else{
@@ -220,7 +224,6 @@ void NumberPuzzle::Node::copy_puzzle(int* pc, int* p){
 
 void NumberPuzzle::Node::show() const{
     int c{};
-    // set_x();
     std::cout << std::endl;
     for (int i{}; i < col; i++){
         for (int j{}; j < col; j++){
