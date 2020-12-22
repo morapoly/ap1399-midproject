@@ -35,9 +35,10 @@ NumberPuzzle::Node::Node(Node* node){
 void NumberPuzzle::Node::set_puzzle(){
     puzzle = new int[n];  
     for (int i{}; i < n; i++){
-        puzzle[i] = i;
+        puzzle[i] = i + 1;
     }
-    x = 0;
+    puzzle[n - 1] = 0;
+    x = n - 1;
 }
 
 void NumberPuzzle::Node::set_puzzle(int* p){
@@ -162,7 +163,6 @@ bool NumberPuzzle::Node::move_to_right(){
         temp = puzzle[x + 1];
         puzzle[x + 1] = puzzle[x];
         puzzle[x] = temp;
-        show();
         return true;
     }
     else{
@@ -177,7 +177,6 @@ bool NumberPuzzle::Node::move_to_left(){
         temp = puzzle[x - 1];
         puzzle[x - 1] = puzzle[x];
         puzzle[x] = temp;
-        show();
         return true;
     }
     else{
@@ -192,7 +191,6 @@ bool NumberPuzzle::Node::move_to_up(){
         temp = puzzle[x - col];
         puzzle[x - col] = puzzle[x];
         puzzle[x] = temp;
-        show();
         return true;
     }
     else{
@@ -207,7 +205,6 @@ bool NumberPuzzle::Node::move_to_down(){
         temp = puzzle[x + col];
         puzzle[x + col] = puzzle[x];
         puzzle[x] = temp;
-        show();
         return true;
     }
     else{
@@ -223,10 +220,16 @@ void NumberPuzzle::Node::copy_puzzle(int* pc, int* p){
 
 void NumberPuzzle::Node::show() const{
     int c{};
+    // set_x();
     std::cout << std::endl;
     for (int i{}; i < col; i++){
         for (int j{}; j < col; j++){
-            std::cout << std::setw(4) << puzzle[c] << " ";
+            if (c == x){
+                std::cout << std::setw(4) << " " << " ";
+            }
+            else{
+                std::cout << std::setw(4) << puzzle[c] << " ";
+            }
             c++;
         }
         std::cout << std::endl << std::endl;
@@ -286,19 +289,21 @@ std::shared_ptr<NumberPuzzle::Node> NumberPuzzle::make_random_puzzle(int moves){
     srand(time(0));
     bool b[4] = {0, 0, 0, 0};
     int count{};
+    auto random_number {rand()};
     while (count < moves){
-        if (rand() % 4 == 0){
+        if (random_number % 4 == 0){
             b[0] = output->move_to_right();
         }
-        else if (rand() % 4 == 1){
+        else if (random_number % 4 == 1){
             b[1] = output->move_to_left();
         }
-        else if (rand() % 4 == 2){
+        else if (random_number % 4 == 2){
             b[2] = output->move_to_up();
         }
         else{
-            b[3] = output->move_to_up();
+            b[3] = output->move_to_down();
         }
+        random_number = rand();
         count++;
         if (!(b[0] || b[1] || b[2] || b[3])){
             count--;
