@@ -6,6 +6,7 @@
 #include <deque>
 #include <memory>
 #include <random>
+#include <chrono>
 
 class NumberPuzzle{
     public:

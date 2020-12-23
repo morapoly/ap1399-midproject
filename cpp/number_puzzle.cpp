@@ -317,6 +317,8 @@ std::shared_ptr<NumberPuzzle::Node> NumberPuzzle::make_random_puzzle(int moves){
 }
 
 std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::breadth_first_search(std::shared_ptr<Node> root){
+    auto start = std::chrono::high_resolution_clock::now();
+
     if (root->goal_test(goal_puzzle)){
         return std::deque<std::shared_ptr<Node>>{root};
     }
@@ -328,38 +330,41 @@ std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::breadth_first_sear
     open_list.push_back(root);
     bool goal_reached{false};
     
-    // for (int i{}; i < 40; i++){
-        while(open_list.size() > 0 && !goal_reached){
-            // std::cout << "ol size: " << open_list.size() << " gr: " << goal_reached << "\n";
-            std::shared_ptr<Node> current_node = open_list.front();
-            closed_list.push_back(current_node);
-            open_list.pop_front();
+    while(open_list.size() > 0 && !goal_reached){
+        auto between = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed{between - start};
+        std::cout << std::setw(4) << int(elapsed.count()) << " sec elapsed, (solving... please wait.)\r";
+        std::shared_ptr<Node> current_node = open_list.front();
+        closed_list.push_back(current_node);
+        open_list.pop_front();
 
-            current_node->expand_node();
-            // current_node->show();
+        current_node->expand_node();
 
-            for (size_t i{}; i < current_node->children.size(); i++){
-                std::shared_ptr<Node> current_child = current_node->children[i];
-                
-                if (current_child->goal_test(goal_puzzle)){
-                    std::cout << "Goal reached..." << std::endl;
-                    goal_reached = true;
-                    // Tracing path
-                    path_trace(path_to_solution, current_child);
-                }
-
-                if (!contains(open_list, current_child) && !contains(closed_list, current_child)){
-                    open_list.push_back(current_child);
-                }
+        for (size_t i{}; i < current_node->children.size(); i++){
+            std::shared_ptr<Node> current_child = current_node->children[i];
+            
+            if (current_child->goal_test(goal_puzzle)){
+                std::cout << "*************\n";
+                std::cout << "Goal reached!" << std::endl;
+                std::cout << "*************\n";
+                goal_reached = true;
+                // Tracing path
+                path_trace(path_to_solution, current_child);
             }
-        // }
+
+            if (!contains(open_list, current_child) && !contains(closed_list, current_child)){
+                open_list.push_back(current_child);
+            }
+        }
     }
+    auto finish = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed{finish - start};
+    std::cout << "\n>> Elapsed time: " << elapsed.count() * 1000 << " ms\n\n";
     return path_to_solution;
 }
 
 bool NumberPuzzle::contains(std::deque<std::shared_ptr<Node>> list, std::shared_ptr<Node> c){
     bool contains = false;
-
     for (size_t i{}; i < list.size(); i++){
         if (list[i]->is_same_puzzle(c->puzzle)){
             contains = true;

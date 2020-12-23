@@ -1,11 +1,9 @@
 #include "mid_project.h"
-
-bool func(int &x);
+#include <chrono>
 
 int main(int argc, char **argv)
 {
     std::cout << "Started...\n";
-
     // int puzzle[] = {       // compatible with goal
     //     8, 2, 3,
     //     6, 7, 4,
@@ -42,30 +40,19 @@ int main(int argc, char **argv)
     // std::shared_ptr<NumberPuzzle::Node> node;
     // node = np.make_random_puzzle(100);
     // node->show();
-    // bool b{true};
-    // while (b){
-    //     b = run_puzzle();
+    
+    bool b{true};
+    while (b){
+        b = run_puzzle();
+    }
+    // auto start = std::chrono::high_resolution_clock::now();
+    // int x{};
+    // while (x < 100000){
+    //     x++;
     // }
-    std::ifstream fs;
-    fs.open("./stuff/input.txt");
-    int p[9];
-    int i{};
-    fs >> p[i];
-    if (fs.is_open()){
-        // while (!fs.eof()){
-        //     fs >> p[i];
-        //     i++;
-        // }
-    }
-    else{
-        std::cout << "File not found.\n";
-    }
-    fs.close();
-    std::cout << p[0] << std::endl;
+    // auto finish = std::chrono::high_resolution_clock::now();
+    // std::chrono::duration<double> elapsed = finish - start;
+    // std::cout << "Elapsed time: " << elapsed.count()*1000000 << " ms " << std::endl;
+    
     return 0;
-}
-
-bool func(int &x){
-    x ++;
-    return x == 10;
 }

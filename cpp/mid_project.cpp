@@ -5,8 +5,11 @@ bool run_puzzle(){
     int col{}, n{}, moves{};
     int* initial_puzzle;
     int* goal_puzzle;
+    std::ifstream fs;
 
+    std::cout << "------------------------\n";
     std::cout << "Welcom to Number Puzzle.\n";
+    std::cout << "------------------------\n";
     std::cout << "Do you want to solve or see?\n";
     while (!is_answer_char(c1)){
         std::cout << "(Enter y to solve a puzzle, or n to see how a puzzle is solved:)\n";
@@ -69,15 +72,40 @@ bool run_puzzle(){
         }
         else{
             // User sets elements from file
+            std::cout << "Input.txt exists in h folder, replace your txt file as same name and format or overwrite inside file.\n";
+            std::cout << "(Enter y if you are done:)\n";
+            
+            c4 = 0; // Use c4 again
+            while (!(c4 == 'y' || c4 == 'Y')){
+                std::cin >> c4;
+            }
+
+            fs.open("./h/input.txt");
+            if (fs.is_open()){
+                for (int i{}; i < n; i++){
+                    fs >> goal_puzzle[i];
+                }
+                std::cout << "The goal puzzle set to:\n";
+                goal_node.set_puzzle(goal_puzzle);
+                goal_node.show();
+            }
+            else{
+                std::cout << "File not found!\n";
+                std::cout << "The goal puzzle set default!\n";
+            }
+            fs.close();
         }
         goal_node.set_puzzle(goal_puzzle);
     }
 
     std::shared_ptr<NumberPuzzle::Node> initial_node = std::make_shared<NumberPuzzle::Node>(col);
+    initial_puzzle = new int[n];
+    initial_node->set_puzzle(goal_puzzle);
+    initial_node->copy_puzzle(initial_puzzle, goal_puzzle);
 
     std::cout << "Do you want to set the initial puzzle which is started from it?\n";
     while (!is_answer_char(c5)){
-        std::cout << "(Enter y to set, or n to be set it random, automatically:)\n";
+        std::cout << "(Enter y to set, or n to be set random, automatically:)\n";
         std::cin >> c5;
     }
     if (is_yes(c5)){
@@ -87,12 +115,11 @@ bool run_puzzle(){
             std::cout << "(Enter y to enter elements in terminal window or n to set it from file:)\n";
             std::cin >> c6;
         }
+        std::cout << "Please remember, you must enter elements in correct way.\n";
+        std::cout << "(Important: your puzzle should be solvable base on the goal puzzle.)\n";
         if (is_yes(c6)){
             // User sets elements in terminal window
-            std::cout << "Please remember, you must enter elements in correct way.\n";
-            std::cout << "(Important: your puzzle should be solvable base on the goal puzzle.)\n";
             std::cout << "Enter elements:\n";
-            initial_puzzle = new int[n];
             for (int i{}; i < n; i++){
                 std::cin >> initial_puzzle[i];
             }
@@ -100,6 +127,28 @@ bool run_puzzle(){
         }
         else{
             // User sets elements from file
+            std::cout << "Input.txt exists in h folder, replace your txt file as same name and format or overwrite inside file.\n";
+            std::cout << "(Enter y if you are done:)\n";
+            
+            c4 = 0; // Use c4 again
+            while (!(c4 == 'y' || c4 == 'Y')){
+                std::cin >> c4;
+            }
+
+            fs.open("./h/input.txt");
+            if (fs.is_open()){
+                for (int i{}; i < n; i++){
+                    fs >> initial_puzzle[i];
+                }
+                std::cout << "The initial puzzle set to:\n";
+                initial_node->set_puzzle(initial_puzzle);
+                initial_node->show();
+            }
+            else{
+                std::cout << "File not found!\n";
+                std::cout << "The initial puzzle didn't set!\n";
+            }
+            fs.close();
         }
 
         // initial_node->set_puzzle(initial_puzzle);
@@ -127,6 +176,11 @@ bool run_puzzle(){
         
         // Going to see how the puzzle is solved
         std::cout << "It's going to solve puzzle using BFS algorithm.\n";
+        c1 = 0; // Use c1 again
+        while (!(c1 == 'y' || c1 == 'Y')){
+            std::cout << "(Enter y to continue.)\n";
+            std::cin >> c1;
+        }
         NumberPuzzle np{col};
         np.set_goal_puzzle(goal_puzzle);
         auto solution = np.breadth_first_search(std::make_shared<NumberPuzzle::Node>(initial_puzzle, col));
