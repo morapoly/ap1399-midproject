@@ -228,7 +228,9 @@ bool run_puzzle(){
             c7 = 0;
         }
         if (initial_node->goal_test()){
+            std::cout << "****************\n";
             std::cout << "Congratulations!\n";
+            std::cout << "****************\n";
             std::cout << "You solved the puzzle.\n";
         }
         else{

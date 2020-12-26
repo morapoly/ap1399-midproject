@@ -38,6 +38,8 @@ class NumberPuzzle{
         void show() const;
         bool is_same_puzzle(int* p) const;
         void expand_node();
+        void expand_node(std::deque<std::shared_ptr<Node>> open_list, std::deque<std::shared_ptr<Node>> closed_list);
+        bool exists(std::deque<std::shared_ptr<Node>> list, std::shared_ptr<Node> c);
         std::shared_ptr<Node> parent;
         std::deque<std::shared_ptr<Node>> children;
     };
@@ -48,6 +50,7 @@ class NumberPuzzle{
     void set_goal_puzzle(int* p);
     std::shared_ptr<Node> make_random_puzzle(int moves = 10);
     std::deque<std::shared_ptr<Node>> breadth_first_search(std::shared_ptr<Node> root);
+    std::deque<std::shared_ptr<Node>> depth_first_search(std::shared_ptr<Node> root);
     bool contains(std::deque<std::shared_ptr<Node>> list, std::shared_ptr<Node> c);
     void path_trace(std::deque<std::shared_ptr<Node>> &path, std::shared_ptr<Node> node);
     

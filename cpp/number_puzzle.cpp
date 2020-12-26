@@ -256,6 +256,88 @@ void NumberPuzzle::Node::expand_node(){
     move_to_down(puzzle, x);
 }
 
+void NumberPuzzle::Node::expand_node(std::deque<std::shared_ptr<Node>> open_list, std::deque<std::shared_ptr<Node>> closed_list){
+    set_x();
+    
+    // move to right
+    if (x % col < col - 1){
+        int* pc = new int[n];
+        copy_puzzle(pc,puzzle);
+        
+        int temp = pc[x + 1];
+        pc[x + 1] = pc[x];
+        pc[x] = temp;
+
+        std::shared_ptr<Node> child = std::make_shared<Node>(pc, col);
+        if (!exists(open_list, child) && !exists(closed_list, child)){
+            children.push_back(child);
+            child->parent = std::make_shared<Node>(*this);
+            return;
+        }
+    }
+
+    // move to left
+    if (x % col > 0){
+        int* pc = new int[n];
+        copy_puzzle(pc,puzzle);
+        
+        int temp = pc[x - 1];
+        pc[x - 1] = pc[x];
+        pc[x] = temp;
+
+        std::shared_ptr<Node> child = std::make_shared<Node>(pc, col);
+        if (!exists(open_list, child) && !exists(closed_list, child)){
+            children.push_back(child);
+            child->parent = std::make_shared<Node>(*this);
+            return;
+        }
+    }
+
+    // move to up
+    if (x - col > 0){
+        int* pc = new int[n];
+        copy_puzzle(pc,puzzle);
+        
+        int temp = pc[x - col];
+        pc[x - col] = pc[x];
+        pc[x] = temp;
+
+        std::shared_ptr<Node> child = std::make_shared<Node>(pc, col);
+        if (!exists(open_list, child) && !exists(closed_list, child)){
+            children.push_back(child);
+            child->parent = std::make_shared<Node>(*this);
+            return;
+        }
+    }
+
+    // move to down
+    if (x + col < n){
+        int* pc = new int[n];
+        copy_puzzle(pc,puzzle);
+        
+        int temp = pc[x + col];
+        pc[x + col] = pc[x];
+        pc[x] = temp;
+
+        std::shared_ptr<Node> child = std::make_shared<Node>(pc, col);
+        if (!exists(open_list, child) && !exists(closed_list, child)){
+            children.push_back(child);
+            child->parent = std::make_shared<Node>(*this);
+            return;
+        }
+    }
+}
+
+bool NumberPuzzle::Node::exists(std::deque<std::shared_ptr<Node>> list, std::shared_ptr<Node> c){
+    bool contains = false;
+    for (size_t i{}; i < list.size(); i++){
+        if (list[i]->is_same_puzzle(c->puzzle)){
+            contains = true;
+        }
+    }
+    return contains;
+}
+
 NumberPuzzle::NumberPuzzle(){
     c = 3;
     n = c * c;
@@ -360,6 +442,164 @@ std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::breadth_first_sear
     auto finish = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed{finish - start};
     std::cout << "\n>> Elapsed time: " << elapsed.count() * 1000 << " ms\n\n";
+    return path_to_solution;
+}
+/*
+std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::depth_first_search(std::shared_ptr<Node> root){
+
+    // if root is goal_node, it returns
+    if (root->goal_test(goal_puzzle)){
+        return std::deque<std::shared_ptr<Node>>{root};
+    }
+    
+    std::deque<std::shared_ptr<Node>> path_to_solution{};
+    std::deque<std::shared_ptr<Node>> open_list{};
+    std::deque<std::shared_ptr<Node>> closed_list{};
+
+    bool goal_reached{false};
+    
+    open_list.push_back(root);
+    std::shared_ptr<Node> current_node = open_list.front();
+
+    while (open_list.size() > 0 && !goal_reached){
+        current_node->expand_node();
+        current_node->show();
+
+        if (current_node->children.size() > 0){
+            std::shared_ptr<Node> current_child = current_node->children[0];
+            // for (size_t i{1}; i < current_node->children.size(); i++){
+            //     if (contains(closed_list,current_child) || contains(open_list,current_child)){
+            //         current_child = current_node->children[i];
+            //     }
+            // }
+            if (contains(closed_list, current_child) || contains(open_list, current_child)){
+                // if (!contains(closed_list, current_node)){
+                //     closed_list.push_back(current_node);
+                //     open_list.pop_back();
+                // }
+                if (!contains(closed_list, open_list.back())){
+                    closed_list.push_back(open_list.back());
+                    open_list.pop_back();
+                }
+                if (current_node != root){
+                    current_node = current_node->parent;
+                }
+            }
+            else{
+                if (current_child->goal_test(goal_puzzle)){
+                    std::cout << "*************\n";
+                    std::cout << "Goal reached!" << std::endl;
+                    std::cout << "*************\n";
+                    goal_reached = true;
+
+                    // Tracing path
+                    path_trace(path_to_solution, current_child);
+                }
+                else{
+                    if (!contains(open_list,current_node)){
+                        open_list.push_back(current_node);
+                    }
+                    current_node = current_child;
+                    // else{
+                    //     closed_list.push_back(open_list.back());
+                    //     open_list.pop_back();
+                    //     current_node = open_list.back();
+                    // }
+                }
+            }
+        }
+        else{
+            if (!contains(closed_list, open_list.back())){
+                closed_list.push_back(open_list.back());
+            }
+            open_list.pop_back();
+            current_node = current_node->parent;
+
+        }
+    }
+    return path_to_solution;
+}
+*/
+std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::depth_first_search(std::shared_ptr<Node> root){
+    
+    // if root is goal_node, it returns
+    if (root->goal_test(goal_puzzle)){
+        return std::deque<std::shared_ptr<Node>>{root};
+    }
+    
+    std::deque<std::shared_ptr<Node>> path_to_solution{};
+    std::deque<std::shared_ptr<Node>> open_list{};
+    std::deque<std::shared_ptr<Node>> closed_list{};
+
+    bool goal_reached{false};
+    
+    open_list.push_back(root);
+    std::shared_ptr<Node> current_node = open_list.front();
+
+    int count{};
+    while (open_list.size() > 1 && !goal_reached){
+        if (count < 1000){
+            current_node->expand_node(open_list, closed_list);
+            count++;   
+        }
+        // current_node->expand_node();
+        // current_node->show();
+
+        std::shared_ptr<Node> current_child;
+        
+        for (size_t i{}; i < current_node->children.size(); i++){
+            if (current_node->children[i]->goal_test(goal_puzzle)){
+                std::cout << "*************\n";
+                std::cout << "Goal reached! Fast check" << std::endl;
+                std::cout << "*************\n";
+                std::cout << "open_list lentgh: " << open_list.size() << "\n";
+                goal_reached = true;
+
+                // Tracing path
+                path_trace(path_to_solution, current_node->children[i]);
+                return path_to_solution;
+            }
+            
+        }
+        for (size_t i{}; i < current_node->children.size(); i++){
+            if (!contains(open_list, current_node->children[i]) && !contains(closed_list, current_node->children[i])){
+                current_child = current_node->children[i];
+                break;
+            }
+        }
+        
+        // the state that we are in a loop
+        if (!current_child){
+            std::cout << open_list.size() <<" open\n";
+            std::cout << closed_list.size() <<" closed\n";
+            if (!contains(closed_list, open_list.back())){
+                closed_list.push_back(open_list.back());
+                open_list.pop_back();
+                current_node = open_list.back();
+            }
+            else{
+                std::cout << "you are fucked up!\n";
+            }
+        }
+        else if (current_child->goal_test(goal_puzzle)){
+            std::cout << "*************\n";
+            std::cout << "Goal reached!" << std::endl;
+            std::cout << "*************\n";
+            std::cout << "open_list lentgh: " << open_list.size() << "\n";
+            goal_reached = true;
+
+            // Tracing path
+            path_trace(path_to_solution, current_child);
+        }
+        else{
+            if (contains(open_list, current_child)){
+                std::cout << "you are fucked up!\n";
+            }
+            open_list.push_back(current_child);
+            current_node = open_list.back();
+        }
+    }
+
     return path_to_solution;
 }
 
