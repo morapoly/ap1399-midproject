@@ -76,6 +76,94 @@ void NumberPuzzle::Node::set_x(){
     }
 }
 
+std::shared_ptr<NumberPuzzle::Node> NumberPuzzle::Node::get_right_child(){
+    set_x();
+    if (x % col < col - 1){
+        int* pc = new int[n];
+        copy_puzzle(pc,puzzle);
+        
+        int temp = pc[x + 1];
+        pc[x + 1] = pc[x];
+        pc[x] = temp;
+
+        set_x();
+        std::shared_ptr<Node> child = std::make_shared<Node>(pc, col);
+        children.push_back(child);
+        child->parent = std::make_shared<Node>(*this);
+        
+        return child;
+    }
+    else{
+        return nullptr;
+    }
+}
+
+std::shared_ptr<NumberPuzzle::Node> NumberPuzzle::Node::get_left_child(){
+    set_x();
+    if (x % col > 0){
+        int* pc = new int[n];
+        copy_puzzle(pc,puzzle);
+
+        int temp = pc[x - 1];
+        pc[x - 1] = pc[x];
+        pc[x] = temp;
+        
+        set_x();
+        std::shared_ptr<Node> child = std::make_shared<Node>(pc, col);
+        children.push_back(child);
+        child->parent = std::make_shared<Node>(*this);
+
+        return child;
+    }
+    else{
+        return nullptr;
+    }
+}
+
+std::shared_ptr<NumberPuzzle::Node> NumberPuzzle::Node::get_up_child(){
+    set_x();
+    if (x - col >= 0){
+        int* pc = new int[n];
+        copy_puzzle(pc,puzzle);
+
+        int temp = pc[x - col];
+        pc[x - col] = pc[x];
+        pc[x] = temp;
+
+        set_x();
+        std::shared_ptr<Node> child = std::make_shared<Node>(pc, col);
+        children.push_back(child);
+        child->parent = std::make_shared<Node>(*this);
+
+        return child;
+    }
+    else{
+        return nullptr;
+    }
+}
+
+std::shared_ptr<NumberPuzzle::Node> NumberPuzzle::Node::get_down_child(){
+    set_x();
+    if (x + col < n){
+        int* pc = new int[n];
+        copy_puzzle(pc,puzzle);
+
+        int temp = pc[x + col];
+        pc[x + col] = pc[x];
+        pc[x] = temp;
+
+        set_x();
+        std::shared_ptr<Node> child = std::make_shared<Node>(pc, col);
+        children.push_back(child);
+        child->parent = std::make_shared<Node>(*this);
+
+        return child;
+    }
+    else{
+        return nullptr;
+    }
+}
+
 bool NumberPuzzle::Node::move_to_right(int* p,int i){
     if (i % col < col - 1){
         int* pc = new int[n];
@@ -246,6 +334,15 @@ bool NumberPuzzle::Node::is_same_puzzle(int* p) const{
         }
     }
     return true;
+}
+
+int NumberPuzzle::Node::find_element(int element){
+    for (int i{}; i < n; i++){
+        if (puzzle[i] == element){
+            return i;
+        }
+    }
+    return -1;
 }
 
 void NumberPuzzle::Node::expand_node(){
@@ -520,6 +617,7 @@ std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::depth_first_search
     return path_to_solution;
 }
 */
+/*
 std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::depth_first_search(std::shared_ptr<Node> root){
     
     // if root is goal_node, it returns
@@ -602,6 +700,118 @@ std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::depth_first_search
 
     return path_to_solution;
 }
+*//*
+std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::depth_first_search(std::shared_ptr<Node> root, int move){
+    std::shared_ptr<Node> current_node = root;
+    static std::deque<std::shared_ptr<Node>> path_to_solution{};
+    
+    if (depth == 20945){
+        current_node->show();
+    }
+    
+
+    if (depth >= 100000){
+        return path_to_solution;
+    }
+    else{
+        depth++;
+    }
+
+    if (current_node->goal_test(goal_puzzle)){
+        std::cout << "*************\n";
+        std::cout << "Goal reached!" << std::endl;
+        std::cout << "*************\n";
+        
+        // Tracing path
+        // goal_node = current_node;
+        path_trace(path_to_solution, current_node);
+        return path_to_solution;
+    }
+    else{
+
+        int count{};
+        if (current_node->get_right_child() && move != 1){
+            std::cout << "0 << d: " << depth << "\n";
+            count++;
+            depth_first_search(current_node->get_right_child(), 0);
+        }
+        if (current_node->get_left_child() && move != 0){
+            std::cout << "1 << d: " << depth << "\n";
+            count++;
+            depth_first_search(current_node->get_left_child(), 1);
+        }
+        if (current_node->get_up_child() && move != 3){
+            std::cout << "2 << d: " << depth << "\n";
+            count++;
+            depth_first_search(current_node->get_up_child(), 2);
+        }
+        if (current_node->get_down_child() && move != 2){
+            std::cout << "3 << d: " << depth << "\n";
+            count++;
+            depth_first_search(current_node->get_down_child(), 3);
+        }
+        std::cout << "count: " << count << std::endl;
+    }
+    
+    return path_to_solution;
+}*/
+
+std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::depth_first_search(std::shared_ptr<Node> root, int move){
+    static std::deque<std::shared_ptr<Node>> path_to_solution{};
+    
+    grid = new int*[c];
+    for (int i{}; i < c; i++){
+        grid[i] = new int[c];
+    }
+
+    moves = new int[max_depth];
+    best_moves = new int[max_depth];
+    best_depth = max_depth;
+
+    // seting grid to initial puzzle
+    for (int i{}; i < c; i++){
+        for (int j{}; j < c; j++){
+            grid[i][j] = root->puzzle[i * c + j];
+        }
+    }
+
+    // finding the blank element or zero element
+    int origin_x{}, origin_y{};
+    for (int i{}; i < c; i++){
+        for (int j{}; j < c; j++){
+            if (grid[i][j] == 0){
+                origin_x = i;
+                origin_y = j;
+                break;
+            }
+        }
+    }
+
+    // starting search
+    auto start = std::chrono::high_resolution_clock::now();
+    
+    search_dfs(origin_x, origin_y, 0, -1, -1);
+
+    auto finish = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed{finish - start};
+    std::cout << "\n>> Elapsed time: " << elapsed.count() * 1000 << " ms\n\n";
+
+    int* temp_puzzle = new int[n];
+    root->copy_puzzle(temp_puzzle, root->puzzle);
+    path_to_solution.push_back(root);
+
+    std::cout << "Tracing path...\n";
+    for (int i{}; i < best_depth; i++){
+        std::shared_ptr<Node> temp_node{std::make_shared<Node>(temp_puzzle, c)};
+        temp_node->set_x();
+        temp_puzzle[temp_node->find_element(best_moves[i])] = 0;
+        temp_puzzle[temp_node->x] = best_moves[i];
+        temp_node->set_puzzle(temp_puzzle);
+        path_to_solution.push_back(temp_node);
+    }
+    
+    return path_to_solution;
+}
 
 bool NumberPuzzle::contains(std::deque<std::shared_ptr<Node>> list, std::shared_ptr<Node> c){
     bool contains = false;
@@ -623,3 +833,106 @@ void NumberPuzzle::path_trace(std::deque<std::shared_ptr<Node>> &path, std::shar
         path.push_back(current);
     }
 }
+
+void NumberPuzzle::search_dfs(int zero_x, int zero_y, int depth, int played_x, int played_y){
+    static bool succes{false};
+
+    // cutoff
+    if (depth >= best_depth){
+        return;
+    }
+
+    if (depth != 0){
+        moves[depth - 1] = grid[played_x][played_y];
+    }
+
+    // checking goal
+    if (is_correct()){
+        // std::cout << "Goal reached with depth: " << std::setw(5) << depth << "!\n" ;
+        if (!succes){
+            std::cout << "*************\n";
+            std::cout << "Goal reached!\n";
+            std::cout << "*************\n";
+            succes = true;
+        }
+
+        best_depth = depth;
+
+        for (int i{}; i < depth; i++){
+            best_moves[i] = moves[i];
+        }
+
+    }
+
+    // moving
+    int x1{zero_x + 1};
+    int y1{zero_y};
+
+    int x2{zero_x - 1};
+    int y2{zero_y};
+
+    int x3{zero_x};
+    int y3{zero_y + 1};
+
+    int x4{zero_x};
+    int y4{zero_y - 1};
+
+    // removing the repeating moves
+    if (x1 == played_x && y1 == played_y) x1 = y1 = -1;
+    if (x2 == played_x && y2 == played_y) x2 = y2 = -1;
+    if (x3 == played_x && y3 == played_y) x3 = y3 = -1;
+    if (x4 == played_x && y4 == played_y) x4 = y4 = -1;
+
+    if (x1 >= 0 && y1 >= 0 && x1 < c && y1 < c){
+        grid[zero_x][zero_y] = grid[x1][y1];
+        grid[x1][y1] = 0;
+        
+        search_dfs(x1, y1, depth + 1, zero_x, zero_y);
+
+        grid[x1][y1] = grid[zero_x][zero_y];
+        grid[zero_x][zero_y] = 0;
+    }
+
+    if (x2 >= 0 && y2 >= 0 && x2 < c && y2 < c){
+        grid[zero_x][zero_y] = grid[x2][y2];
+        grid[x2][y2] = 0;
+        
+        search_dfs(x2, y2, depth + 1, zero_x, zero_y);
+
+        grid[x2][y2] = grid[zero_x][zero_y];
+        grid[zero_x][zero_y] = 0;
+    }
+
+    if (x3 >= 0 && y3 >= 0 && x3 < c && y3 < c){
+        grid[zero_x][zero_y] = grid[x3][y3];
+        grid[x3][y3] = 0;
+        
+        search_dfs(x3, y3, depth + 1, zero_x, zero_y);
+
+        grid[x3][y3] = grid[zero_x][zero_y];
+        grid[zero_x][zero_y] = 0;
+    }
+
+    if (x4 >= 0 && y4 >= 0 && x4 < c && y4 < c){
+        grid[zero_x][zero_y] = grid[x4][y4];
+        grid[x4][y4] = 0;
+        
+        search_dfs(x4, y4, depth + 1, zero_x, zero_y);
+
+        grid[x4][y4] = grid[zero_x][zero_y];
+        grid[zero_x][zero_y] = 0;
+    }
+
+}
+
+bool NumberPuzzle::is_correct(){
+    for (int i{}; i < c; i++){
+        for (int j{}; j < c; j++){
+            if (grid[i][j] != goal_puzzle[i * c + j]){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+

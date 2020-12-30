@@ -26,6 +26,10 @@ class NumberPuzzle{
         bool goal_test() const;
         bool goal_test(int* goal_puzzle) const;
         void set_x();
+        std::shared_ptr<Node> get_right_child();
+        std::shared_ptr<Node> get_left_child();
+        std::shared_ptr<Node> get_up_child();
+        std::shared_ptr<Node> get_down_child();
         bool move_to_right(int* p,int i);
         bool move_to_left(int* p,int i);
         bool move_to_up(int* p,int i);
@@ -37,6 +41,7 @@ class NumberPuzzle{
         void copy_puzzle(int* pc,int* p);
         void show() const;
         bool is_same_puzzle(int* p) const;
+        int find_element(int element);
         void expand_node();
         void expand_node(std::deque<std::shared_ptr<Node>> open_list, std::deque<std::shared_ptr<Node>> closed_list);
         bool exists(std::deque<std::shared_ptr<Node>> list, std::shared_ptr<Node> c);
@@ -50,14 +55,22 @@ class NumberPuzzle{
     void set_goal_puzzle(int* p);
     std::shared_ptr<Node> make_random_puzzle(int moves = 10);
     std::deque<std::shared_ptr<Node>> breadth_first_search(std::shared_ptr<Node> root);
-    std::deque<std::shared_ptr<Node>> depth_first_search(std::shared_ptr<Node> root);
     bool contains(std::deque<std::shared_ptr<Node>> list, std::shared_ptr<Node> c);
     void path_trace(std::deque<std::shared_ptr<Node>> &path, std::shared_ptr<Node> node);
+    std::deque<std::shared_ptr<Node>> depth_first_search(std::shared_ptr<Node> root, int move = -1);
+    void search_dfs(int zero_x, int zero_y, int depth, int played_x, int played_y);
+    bool is_correct();
     
     private:
     int c{3};   // Number of columns
     int n{c * c};
+    int max_depth{100};
     int* goal_puzzle;
+    int** grid;
+    int* moves;
+    int* best_moves;
+    int best_depth;
+
 };
 
 #endif

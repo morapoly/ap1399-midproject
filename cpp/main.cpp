@@ -3,17 +3,19 @@
 
 int main(int argc, char **argv)
 {
+    
     std::cout << "Started...\n";
+    
     int puzzle[] = {       // compatible with goal
-        1, 2, 3,
-        4, 5, 6,
-        7, 8, 0 
+        0, 1, 3,
+        5, 2, 6,
+        4, 7, 8 
     };
 
     int goal[] = {
         1, 2, 3,
         4, 5, 6,
-        7, 8, 0 
+        7, 8, 0
     };
 
     NumberPuzzle::Node root{puzzle, 3};
@@ -22,7 +24,7 @@ int main(int argc, char **argv)
     NumberPuzzle ui{3};
     ui.set_goal_puzzle(goal);
     std::deque<std::shared_ptr<NumberPuzzle::Node>> sol = ui.depth_first_search(std::make_shared<NumberPuzzle::Node>(root));
-    std::cout << "Ended...\n"; 
+    std::cout << "Ended...\n\n"; 
 
     if (sol.size() > 0){
         sol = std::deque<std::shared_ptr<NumberPuzzle::Node>>(sol.rbegin(),sol.rend());
@@ -53,6 +55,5 @@ int main(int argc, char **argv)
     // auto finish = std::chrono::high_resolution_clock::now();
     // std::chrono::duration<double> elapsed = finish - start;
     // std::cout << "Elapsed time: " << elapsed.count()*1000000 << " ms " << std::endl;
-    
     return 0;
 }
