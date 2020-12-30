@@ -57,15 +57,17 @@ class NumberPuzzle{
     std::deque<std::shared_ptr<Node>> breadth_first_search(std::shared_ptr<Node> root);
     bool contains(std::deque<std::shared_ptr<Node>> list, std::shared_ptr<Node> c);
     void path_trace(std::deque<std::shared_ptr<Node>> &path, std::shared_ptr<Node> node);
-    std::deque<std::shared_ptr<Node>> depth_first_search(std::shared_ptr<Node> root, int move = -1);
+    std::deque<std::shared_ptr<Node>> depth_first_search(std::shared_ptr<Node> root, int max_depth = 100);
     void search_dfs(int zero_x, int zero_y, int depth, int played_x, int played_y);
     bool is_correct();
     
     private:
     int c{3};   // Number of columns
     int n{c * c};
-    int max_depth{100};
+    int max_depth;
     int* goal_puzzle;
+    
+    // just for DFS
     int** grid;
     int* moves;
     int* best_moves;
