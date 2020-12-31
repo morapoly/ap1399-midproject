@@ -1,6 +1,6 @@
 #include "mid_project.h"
 
-int main(int argc, char **argv)
+int main()
 {
     bool b{true};
     while (b){

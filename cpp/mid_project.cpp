@@ -220,7 +220,13 @@ bool run_puzzle(){
         initial_node->set_puzzle(initial_puzzle);
 
         if (is_yes(c1)){
-            auto solution = np.breadth_first_search(initial_node);
+            std::cout << "\033[1;36m"; // cyan bold text
+            while (max_depth < 30){
+                std::cout << "(Enter an integer greater equal than 30 for max depth:)\n";
+                std::cin >> max_depth;
+            }
+            std::cout << "\033[0m\n"; // rest to default
+            auto solution = np.breadth_first_search(initial_node, max_depth);
             if (solution.size() > 0){
                 // reversing
                 solution = std::deque<std::shared_ptr<NumberPuzzle::Node>>(solution.rbegin(), solution.rend());
