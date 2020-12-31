@@ -1,5 +1,9 @@
 #include "number_puzzle.h"
 
+// for dfs time measuring
+auto dfs_start = std::chrono::high_resolution_clock::now();
+int dfs_count{};
+
 // Node methods
 NumberPuzzle::Node::Node(){
     col = 3;
@@ -446,6 +450,8 @@ NumberPuzzle::NumberPuzzle(){
 NumberPuzzle::~NumberPuzzle(){
     goal_puzzle = nullptr;
     grid = nullptr;
+    moves = nullptr;
+    best_moves = nullptr;
 }
 
 NumberPuzzle::NumberPuzzle(int c){
@@ -517,10 +523,11 @@ std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::breadth_first_sear
         auto between = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed{between - start};
         if (elapsed.count() >= count){
-            std::cout << count << "\n";
+            std::cout << "\033[1;32m"; // green bold text
+            std::cout << "\033[A\033[2K"; // remove last line
+            std::cout << std::setw(4) << count << "s >> solving... please wait!\n";
             count++;
         }
-        // std::cout << std::setw(4) << int(elapsed.count()) << " sec elapsed, (solving... please wait.)\r";
         std::shared_ptr<Node> current_node = open_list.front();
         closed_list.push_back(current_node);
         open_list.pop_front();
@@ -531,9 +538,12 @@ std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::breadth_first_sear
             std::shared_ptr<Node> current_child = current_node->children[i];
             
             if (current_child->goal_test(goal_puzzle)){
+                std::cout << "\033[A\033[2K"; // remove last line
+                std::cout << "\033[1;35m"; // magneta bold text
                 std::cout << "\n*************\n";
                 std::cout << "Goal reached!" << std::endl;
                 std::cout << "*************\n";
+                std::cout << "\033[0m\n"; // rest to default
                 goal_reached = true;
                 // Tracing path
                 path_trace(path_to_solution, current_child);
@@ -546,7 +556,9 @@ std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::breadth_first_sear
     }
     auto finish = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed{finish - start};
+    std::cout << "\033[1;32m"; // green bold text
     std::cout << "\n>> Elapsed time: " << elapsed.count() * 1000 << " ms\n\n";
+    std::cout << "\033[0m\n"; // rest to default
     return path_to_solution;
 }
 
@@ -584,12 +596,16 @@ std::deque<std::shared_ptr<NumberPuzzle::Node>> NumberPuzzle::depth_first_search
 
     // starting search
     auto start = std::chrono::high_resolution_clock::now();
-    
+    dfs_start = start;
+    dfs_count = 1;
+
     search_dfs(origin_x, origin_y, 0, -1, -1);
 
     auto finish = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed{finish - start};
+    std::cout << "\033[1;32m"; // green bold text
     std::cout << "\n>> Elapsed time: " << elapsed.count() * 1000 << " ms\n\n";
+    std::cout << "\033[0m\n"; // rest to default
 
     int* temp_puzzle = new int[n];
     root->copy_puzzle(temp_puzzle, root->puzzle);
@@ -645,9 +661,12 @@ void NumberPuzzle::search_dfs(int zero_x, int zero_y, int depth, int played_x, i
     if (is_correct()){
         // std::cout << "Goal reached with depth: " << std::setw(5) << depth << "!\n" ;
         if (!succes){
+            std::cout << "\033[A\033[2K"; // remove last line
+            std::cout << "\033[1;35m"; // magneta bold text
             std::cout << "*************\n";
             std::cout << "Goal reached!\n";
             std::cout << "*************\n";
+            std::cout << "\033[0m\n"; // rest to default
             succes = true;
         }
 
@@ -657,6 +676,16 @@ void NumberPuzzle::search_dfs(int zero_x, int zero_y, int depth, int played_x, i
             best_moves[i] = moves[i];
         }
 
+    }
+
+    // time measuring
+    auto between = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed{between - dfs_start};
+    if (elapsed.count() >= dfs_count){
+        std::cout << "\033[1;32m"; // green bold text
+        std::cout << "\033[A\033[2K"; // remove last line
+        std::cout << std::setw(4) << dfs_count << "s >> solving... please wait!\n";
+        dfs_count++;
     }
 
     // moving

@@ -206,14 +206,14 @@ bool run_puzzle(){
         // Going to see how the puzzle is solved
         std::cout << "It's going to solve puzzle.\n";
         std::cout << "Do you want to be going to solved by BFS algorithm or DFS?\n";
-
+        std::cout << "\033[1;32m"; // green bold text
+        std::cout << "DFS is optimized and is so faster!\n";
+        std::cout << "\033[0m\n"; // rest to default
         c1 = 0; // Use c1 again
-        std::cout << "\033[1;36m"; // cyan bold text
         while (!is_answer_char(c1)){
             std::cout << "(Enter y for BFS or n for DFS:)\n";
             std::cin >> c1;
         }
-        std::cout << "\033[0m\n"; // rest to default
 
         NumberPuzzle np{col};
         np.set_goal_puzzle(goal_puzzle);
@@ -225,9 +225,11 @@ bool run_puzzle(){
                 // reversing
                 solution = std::deque<std::shared_ptr<NumberPuzzle::Node>>(solution.rbegin(), solution.rend());
                 for (size_t i{}; i < solution.size(); i++){
+                    std::cout << "\033[1;32m"; // green bold text
                     std::cout << "Move " << i << std::endl;
                     solution[i]->show();
                 }
+                std::cout << "\033[0m\n"; // rest to default
             }
             else{
                 std::cout << "\033[1;31m"; // red bold text
@@ -245,9 +247,11 @@ bool run_puzzle(){
             auto solution = np.depth_first_search(initial_node, max_depth);
             if (solution.size() > 0){
                 for (size_t i{}; i < solution.size(); i++){
+                    std::cout << "\033[1;32m"; // green bold text
                     std::cout << "Move " << i << std::endl;
                     solution[i]->show();
                 }
+                std::cout << "\033[0m\n"; // rest to default
             }
             else{
                 std::cout << "\033[1;31m"; // red bold text

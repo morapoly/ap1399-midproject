@@ -7,6 +7,7 @@
 #include <memory>
 #include <random>
 #include <chrono>
+#include <stdlib.h>
 
 class NumberPuzzle{
     public:
@@ -72,7 +73,7 @@ class NumberPuzzle{
     int* moves;
     int* best_moves;
     int best_depth;
-
+    
 };
 
 #endif
